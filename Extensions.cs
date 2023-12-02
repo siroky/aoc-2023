@@ -17,6 +17,16 @@ public static class Extensions
         return Char.IsDigit(c);
     }
 
+    public static T Second<T>(this IEnumerable<T> items)
+    {
+        return items.Skip(1).First();
+    }
+
+    public static IEnumerable<string> Words(this string s)
+    {
+        return s.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+    }
+
     public static IEnumerable<int> To(this int start, int end)
     {
         var increment = start > end ? -1 : 1;
