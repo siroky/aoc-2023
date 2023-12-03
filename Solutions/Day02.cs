@@ -1,6 +1,6 @@
 ﻿namespace AOC;
 
-static class Day02
+public static class Day02
 {
     public static IEnumerable<object> Solve(List<string> lines)
     {
