@@ -6,25 +6,11 @@ public static class Day02
     {
         var games = lines.Select(l => ParseGame(l)).ToList();
         
-        var bag = new Pull(R: 12, G: 13, B: 14);
-        yield return games.Where(g => g.Pulls.All(p => LessOrEqual(p, bag))).Sum(g => g.Id);
+        var bag = new Vector3(X: 12, Y: 13, Z: 14);
+        yield return games.Where(g => g.Pulls.All(p => p.LessOrEqual(bag))).Sum(g => g.Id);
 
-        var minBags = games.Select(g => g.Pulls.Aggregate(Max));
-        yield return minBags.Sum(b => b.R * b.G * b.B);
-    }
-
-    private static bool LessOrEqual(Pull a, Pull b)
-    {
-        return a.R <= b.R && a.G <= b.G && a.B <= b.B;
-    }
-
-    private static Pull Max(Pull a, Pull b)
-    {
-        return new Pull(
-            R: Math.Max(a.R, b.R),
-            G: Math.Max(a.G, b.G),
-            B: Math.Max(a.B, b.B)
-        );
+        var minBags = games.Select(g => g.Pulls.Aggregate((a, b) => a.Max(b)));
+        yield return minBags.Sum(b => b.X * b.Y * b.Z);
     }
 
     private static Game ParseGame(string line)
@@ -35,7 +21,7 @@ public static class Day02
         return new Game(id, pulls);
     }
 
-    private static Pull ParsePull(string pull)
+    private static Vector3 ParsePull(string pull)
     {
         var counts = pull.Split(", ").Select(p => p.Words());
         var cubes = counts.ToDictionary(
@@ -43,14 +29,14 @@ public static class Day02
             p => p.First().ToInt()
         );
 
-        return new Pull(
-            R: cubes.GetValueOrDefault("red"),
-            G: cubes.GetValueOrDefault("green"),
-            B: cubes.GetValueOrDefault("blue")
+        return new Vector3(
+            X: cubes.GetValueOrDefault("red"),
+            Y: cubes.GetValueOrDefault("green"),
+            Z: cubes.GetValueOrDefault("blue")
         );
     }
 
-    record Game(int Id, List<Pull> Pulls);
+    record Game(int Id, List<Vector3> Pulls);
 
     record Pull(int R, int G, int B);
 }

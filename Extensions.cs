@@ -82,8 +82,24 @@ public static class Extensions
 
 public record Vector2(int X, int Y);
 
+public record Vector3(int X, int Y, int Z);
+
 public static class VectorExtensions
 {
+    public static bool LessOrEqual(this Vector3 a, Vector3 b)
+    {
+        return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
+    }
+
+    public static Vector3 Max(this Vector3 a, Vector3 b)
+    {
+        return new Vector3(
+            X: Math.Max(a.X, b.X),
+            Y: Math.Max(a.Y, b.Y),
+            Z: Math.Max(a.Z, b.Z)
+        );
+    }
+
     public static IEnumerable<Vector2> Adjacent(this Vector2 v)
     {
         yield return new Vector2(v.X - 1, v.Y - 1);
