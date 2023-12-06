@@ -7,6 +7,11 @@ public static class Extensions
         return Int32.Parse(s);
     }
 
+    public static long Tolong(this string s)
+    {
+        return Int64.Parse(s);
+    }
+
     public static int ToInt(this char c)
     {
         return c.ToString().ToInt();
@@ -29,7 +34,37 @@ public static class Extensions
 
     public static T Second<T>(this IEnumerable<T> items)
     {
-        return items.Skip(1).First();
+        return items.ElementAt(1);
+    }
+
+    public static T Third<T>(this IEnumerable<T> items)
+    {
+        return items.ElementAt(2);
+    }
+
+    public static T Fourth<T>(this IEnumerable<T> items)
+    {
+        return items.ElementAt(3);
+    }
+
+    public static T Fifth<T>(this IEnumerable<T> items)
+    {
+        return items.ElementAt(4);
+    }
+
+    public static T Sixth<T>(this IEnumerable<T> items)
+    {
+        return items.ElementAt(5);
+    }
+
+    public static T Seventh<T>(this IEnumerable<T> items)
+    {
+        return items.ElementAt(6);
+    }
+
+    public static T Eighth<T>(this IEnumerable<T> items)
+    {
+        return items.ElementAt(7);
     }
 
     public static bool NonEmpty<T>(this IEnumerable<T> items)
