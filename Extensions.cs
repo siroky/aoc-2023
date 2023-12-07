@@ -7,7 +7,7 @@ public static class Extensions
         return Int32.Parse(s);
     }
 
-    public static long Tolong(this string s)
+    public static long ToLong(this string s)
     {
         return Int64.Parse(s);
     }
@@ -30,6 +30,11 @@ public static class Extensions
     public static string Join(this IEnumerable<char> chars)
     {
         return new string(chars.ToArray());
+    }
+
+    public static string Join(this IEnumerable<string> strings)
+    {
+        return String.Join("", strings);
     }
 
     public static T Second<T>(this IEnumerable<T> items)
@@ -104,6 +109,16 @@ public static class Extensions
     }
 
     public static IEnumerable<int> To(this int start, int end)
+    {
+        var increment = start > end ? -1 : 1;
+        var boundary = end + increment;
+        for (var i = start; i != boundary; i += increment)
+        {
+            yield return i;
+        }
+    }
+
+    public static IEnumerable<long> To(this long start, long end)
     {
         var increment = start > end ? -1 : 1;
         var boundary = end + increment;
