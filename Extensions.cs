@@ -82,6 +82,11 @@ public static class Extensions
         return items.Select(selector).Aggregate((a, b) => a * b);
     }
 
+    public static IEnumerable<T> ToEnumerable<T>(this T item)
+    {
+        yield return item;
+    }
+
     public static IEnumerable<T> Concat<T>(this T item, IEnumerable<T> items)
     {
         return new[] { item }.Concat(items);
