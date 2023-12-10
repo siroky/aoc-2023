@@ -139,16 +139,34 @@ public static class Extensions
     }
 }
 
+public record Vector2(int X, int Y)
+{
+    public static readonly Vector2 Up = new Vector2(0, 1);
+    public static readonly Vector2 Down = new Vector2(0, -1);
+    public static readonly Vector2 Left = new Vector2(-1, 0);
+    public static readonly Vector2 Right = new Vector2(1, 0);
 
-public record Vector2(int X, int Y);
+    public static readonly IEnumerable<Vector2> Directions = new[] { Up, Down, Left, Right };
+    public static readonly IEnumerable<Vector2> Diagonals = new[] { Up.Add(Left), Up.Add(Right), Down.Add(Left), Down.Add(Right) };
+}
 
 public record Vector3(int X, int Y, int Z);
 
 public static class VectorExtensions
 {
+    public static Vector2 Inverse(this Vector2 v)
+    {
+        return new Vector2(-v.X, -v.Y);
+    }
+
     public static bool LessOrEqual(this Vector3 a, Vector3 b)
     {
         return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
+    }
+
+    public static Vector2 Add(this Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X + b.X, a.Y + b.Y);
     }
 
     public static Vector3 Max(this Vector3 a, Vector3 b)
@@ -160,15 +178,13 @@ public static class VectorExtensions
         );
     }
 
-    public static IEnumerable<Vector2> Adjacent(this Vector2 v)
+    public static IEnumerable<Vector2> Adjacent4(this Vector2 v)
     {
-        yield return new Vector2(v.X - 1, v.Y - 1);
-        yield return new Vector2(v.X - 1, v.Y);
-        yield return new Vector2(v.X - 1, v.Y + 1);
-        yield return new Vector2(v.X, v.Y - 1);
-        yield return new Vector2(v.X, v.Y + 1);
-        yield return new Vector2(v.X + 1, v.Y - 1);
-        yield return new Vector2(v.X + 1, v.Y);
-        yield return new Vector2(v.X + 1, v.Y + 1);
+        return Vector2.Directions.Select(d => v.Add(d));
+    }
+
+    public static IEnumerable<Vector2> Adjacent8(this Vector2 v)
+    {
+        return Vector2.Directions.Concat(Vector2.Diagonals).Select(d => v.Add(d));
     }
 }

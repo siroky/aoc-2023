@@ -15,18 +15,15 @@ public static class Day09
     {
         var sequences = new List<List<long>>() { history };
         var sequence = history;
-        while (sequence.Any(i => i != 0))
+        while (sequences.Last().Any(i => i != 0))
         {
-            var diffs = sequence.Zip(sequence.Skip(1), (a, b) => b - a).ToList();
-            sequences.Add(diffs);
-            sequence = diffs;
+            sequence = sequence.Zip(sequence.Skip(1), (a, b) => b - a).ToList();
+            sequences.Add(sequence);
         }
-
-        sequences.Reverse();
 
         var next = 0L;
         var prev = 0L;
-        foreach (var s in sequences)
+        foreach (var s in sequences.AsEnumerable().Reverse())
         {
             next = s.Last() + next;
             prev = s.First() - prev;

@@ -16,14 +16,14 @@ public static class Day03
         ));
 
         var scheme = grid.Flatten().ToDictionary(c => c.Position, c => c.Value);
-        var parts = numbers.Where(n => n.Positions.SelectMany(p => p.Adjacent()).Any(p =>
+        var parts = numbers.Where(n => n.Positions.SelectMany(p => p.Adjacent8()).Any(p =>
             scheme.TryGetValue(p, out var c) && !c.IsDigit() && c != '.'
         )).ToList();
 
         yield return parts.Sum(n => n.Value);
 
         var asteriskPositions = grid.Flatten().Where(c => c.Value == '*').Select(c => c.Position);
-        var asteriskParts = asteriskPositions.Select(p => p.Adjacent().SelectMany(p => parts.Where(n => n.Positions.Contains(p))).Distinct());
+        var asteriskParts = asteriskPositions.Select(p => p.Adjacent8().SelectMany(p => parts.Where(n => n.Positions.Contains(p))).Distinct());
         var gearParts = asteriskParts.Where(p => p.Count() == 2);
         var gearRatios = gearParts.Select(g => g.Product(n => n.Value));
 
