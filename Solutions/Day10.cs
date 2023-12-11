@@ -8,45 +8,12 @@ public static class Day10
         var tileMap = tiles.ToDictionary(p => p.Position, p => p);
         
         var start = tileMap.Values.First(p => p.Type == 'S');
-        var steps = Traverse(tileMap, start);
+        var steps = Traverse(tileMap, start).ToList();
         yield return steps.Count() - 1;
 
         var loop = steps.Flatten().ToHashSet();
-        var inside = GetInside(tileMap, loop);
+        var inside = Inside(tileMap, loop);
         yield return inside.Count();
-    }
-
-    private static IEnumerable<Tile> GetInside(Dictionary<Vector2, Tile> tileMap, HashSet<Tile> loop)
-    {
-        var minY = tileMap.Keys.Min(p => p.Y);
-        var maxX = tileMap.Keys.Max(p => p.X);
-        for (var y = 0; y > minY; y--)
-        {
-            var upInside = false;
-            var downInside = false;
-
-            for (var x = 0; x < maxX; x++)
-            {
-                var position = new Vector2(x, y);
-                var tile = tileMap.GetValueOrDefault(position);
-
-                if (loop.Contains(tile))
-                {
-                    if (tile.Connections.Contains(Vector2.Up))
-                    {
-                        upInside = !upInside;
-                    }
-                    if (tile.Connections.Contains(Vector2.Down))
-                    {
-                        downInside = !downInside;
-                    }
-                }
-                else if (upInside && downInside)
-                {
-                    yield return tile;
-                }
-            }
-        }
     }
 
     private static IEnumerable<IEnumerable<Tile>> Traverse(Dictionary<Vector2, Tile> tileMap, Tile start)
@@ -77,7 +44,40 @@ public static class Day10
         }
     }
 
-    private static Tile ParseTile(int x, int y, char type)
+    private static IEnumerable<Tile> Inside(Dictionary<Vector2, Tile> tileMap, HashSet<Tile> loop)
+    {
+        var min = tileMap.Keys.Aggregate((a, b) => a.Min(b));
+        var max = tileMap.Keys.Aggregate((a, b) => a.Max(b));
+
+        for (var y = min.Y; y < max.Y; y++)
+        {
+            var upInside = false;
+            var downInside = false;
+
+            for (var x = min.X; x < max.X; x++)
+            {
+                var tile = tileMap.GetValueOrDefault(new Vector2(x, y));
+
+                if (loop.Contains(tile))
+                {
+                    if (tile.Connections.Contains(Vector2.Up))
+                    {
+                        upInside = !upInside;
+                    }
+                    if (tile.Connections.Contains(Vector2.Down))
+                    {
+                        downInside = !downInside;
+                    }
+                }
+                else if (upInside && downInside)
+                {
+                    yield return tile;
+                }
+            }
+        }
+    }
+
+    private static Tile ParseTile(long x, long y, char type)
     {
         var connections = type switch
         {

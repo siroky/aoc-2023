@@ -139,7 +139,7 @@ public static class Extensions
     }
 }
 
-public record Vector2(int X, int Y)
+public record Vector2(long X, long Y)
 {
     public static readonly Vector2 Up = new Vector2(0, 1);
     public static readonly Vector2 Down = new Vector2(0, -1);
@@ -150,18 +150,16 @@ public record Vector2(int X, int Y)
     public static readonly IEnumerable<Vector2> Diagonals = new[] { Up.Add(Left), Up.Add(Right), Down.Add(Left), Down.Add(Right) };
 }
 
-public record Vector3(int X, int Y, int Z);
-
-public static class VectorExtensions
+public static class Vector2Extensions
 {
+    public static long ManhattanDistance(this Vector2 a, Vector2 b)
+    {
+        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+    }
+
     public static Vector2 Inverse(this Vector2 v)
     {
         return new Vector2(-v.X, -v.Y);
-    }
-
-    public static bool LessOrEqual(this Vector3 a, Vector3 b)
-    {
-        return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
     }
 
     public static Vector2 Add(this Vector2 a, Vector2 b)
@@ -169,12 +167,19 @@ public static class VectorExtensions
         return new Vector2(a.X + b.X, a.Y + b.Y);
     }
 
-    public static Vector3 Max(this Vector3 a, Vector3 b)
+    public static Vector2 Min(this Vector2 a, Vector2 b)
     {
-        return new Vector3(
+        return new Vector2(
+            X: Math.Min(a.X, b.X),
+            Y: Math.Min(a.Y, b.Y)
+        );
+    }
+
+    public static Vector2 Max(this Vector2 a, Vector2 b)
+    {
+        return new Vector2(
             X: Math.Max(a.X, b.X),
-            Y: Math.Max(a.Y, b.Y),
-            Z: Math.Max(a.Z, b.Z)
+            Y: Math.Max(a.Y, b.Y)
         );
     }
 
@@ -186,5 +191,24 @@ public static class VectorExtensions
     public static IEnumerable<Vector2> Adjacent8(this Vector2 v)
     {
         return Vector2.Directions.Concat(Vector2.Diagonals).Select(d => v.Add(d));
+    }
+}
+
+public record Vector3(long X, long Y, long Z);
+
+public static class Vector3Extensions
+{
+    public static bool LessOrEqual(this Vector3 a, Vector3 b)
+    {
+        return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
+    }
+
+    public static Vector3 Max(this Vector3 a, Vector3 b)
+    {
+        return new Vector3(
+            X: Math.Max(a.X, b.X),
+            Y: Math.Max(a.Y, b.Y),
+            Z: Math.Max(a.Z, b.Z)
+        );
     }
 }
