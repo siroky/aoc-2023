@@ -18,10 +18,10 @@ public static class Day11
 
     private static IEnumerable<Vector2> ExpandGalaxies(List<Vector2> galaxies, long factor)
     {
-        var galaxyX = galaxies.Select(g => g.X).ToList();
-        var galaxyY = galaxies.Select(g => g.Y).ToList();
-        var emptyX = 0L.To(galaxyX.Max()).Except(galaxyX).ToList();
-        var emptyY = 0L.To(galaxyY.Max()).Except(galaxyY).ToList();
+        var galaxyX = galaxies.Select(g => g.X).ToHashSet();
+        var galaxyY = galaxies.Select(g => g.Y).ToHashSet();
+        var emptyX = galaxyX.Min().To(galaxyX.Max()).Except(galaxyX).ToList();
+        var emptyY = galaxyY.Min().To(galaxyY.Max()).Except(galaxyY).ToList();
 
         foreach (var galaxy in galaxies)
         {

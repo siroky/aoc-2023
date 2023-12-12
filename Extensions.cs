@@ -32,9 +32,9 @@ public static class Extensions
         return new string(chars.ToArray());
     }
 
-    public static string Join(this IEnumerable<string> strings)
+    public static string Join(this IEnumerable<string> strings, string separator = "")
     {
-        return String.Join("", strings);
+        return String.Join(separator, strings);
     }
 
     public static T Second<T>(this IEnumerable<T> items)
@@ -50,26 +50,6 @@ public static class Extensions
     public static T Fourth<T>(this IEnumerable<T> items)
     {
         return items.ElementAt(3);
-    }
-
-    public static T Fifth<T>(this IEnumerable<T> items)
-    {
-        return items.ElementAt(4);
-    }
-
-    public static T Sixth<T>(this IEnumerable<T> items)
-    {
-        return items.ElementAt(5);
-    }
-
-    public static T Seventh<T>(this IEnumerable<T> items)
-    {
-        return items.ElementAt(6);
-    }
-
-    public static T Eighth<T>(this IEnumerable<T> items)
-    {
-        return items.ElementAt(7);
     }
 
     public static bool NonEmpty<T>(this IEnumerable<T> items)
