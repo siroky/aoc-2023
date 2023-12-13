@@ -4,7 +4,7 @@ public static class Day05
 {
     public static IEnumerable<object> Solve(List<string> lines)
     {
-        var parts = lines.SubsequencesBy(l => l.NonEmpty());
+        var parts = lines.SplitBy(l => l.IsEmpty());
         var seeds = parts.First().First().Words().Skip(1).Select(i => i.ToLong()).ToList();
         var maps = parts.Skip(1).Select(p => ParseMap(p).ToList()).ToList();
 

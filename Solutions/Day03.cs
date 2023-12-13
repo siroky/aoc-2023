@@ -9,7 +9,7 @@ public static class Day03
             Value: c
         )));
 
-        var digitSequences = grid.SelectMany(l => l.SubsequencesBy(c => c.Value.IsDigit()));
+        var digitSequences = grid.SelectMany(l => l.SplitBy(c => !c.Value.IsDigit()));
         var numbers = digitSequences.Select(d => (
             Positions: d.Select(c => c.Position),
             Value: d.Select(c => c.Value).Join().ToInt()

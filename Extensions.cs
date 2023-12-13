@@ -52,9 +52,14 @@ public static class Extensions
         return items.ElementAt(3);
     }
 
+    public static bool IsEmpty<T>(this IEnumerable<T> items)
+    {
+        return !items.Any();
+    }
+
     public static bool NonEmpty<T>(this IEnumerable<T> items)
     {
-        return items.Any();
+        return !items.IsEmpty();
     }
 
     public static int Product<T>(this IEnumerable<T> items, Func<T, int> selector)
@@ -90,6 +95,30 @@ public static class Extensions
             {
                 yield return subsequence;
                 subsequence = new List<T>();
+            }
+        }
+        if (subsequence.NonEmpty())
+        {
+            yield return subsequence;
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T>> SplitBy<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+    {
+        var subsequence = new List<T>();
+        foreach (var item in items)
+        {
+            if (predicate(item))
+            {
+                if (subsequence.NonEmpty())
+                {
+                    yield return subsequence;
+                    subsequence = new List<T>();
+                }
+            }
+            else
+            {
+                subsequence.Add(item);
             }
         }
         if (subsequence.NonEmpty())
@@ -137,9 +166,24 @@ public static class Vector2Extensions
         return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
     }
 
+    public static bool LessOrEqual(this Vector2 a, Vector2 b)
+    {
+        return a.X <= b.X && a.Y <= b.Y;
+    }
+
+    public static bool GreaterOrEqual(this Vector2 a, Vector2 b)
+    {
+        return a.X >= b.X && a.Y >= b.Y;
+    }
+
     public static Vector2 Inverse(this Vector2 v)
     {
-        return new Vector2(-v.X, -v.Y);
+        return v.Multiply(-1);
+    }
+
+    public static Vector2 Multiply(this Vector2 v, int factor)
+    {
+        return new Vector2(v.X * factor, v.Y * factor);
     }
 
     public static Vector2 Add(this Vector2 a, Vector2 b)
