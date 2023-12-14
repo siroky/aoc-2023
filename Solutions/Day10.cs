@@ -46,8 +46,8 @@ public static class Day10
 
     private static IEnumerable<Tile> Inside(Dictionary<Vector2, Tile> tileMap, HashSet<Tile> loop)
     {
-        var min = tileMap.Keys.Aggregate((a, b) => a.Min(b));
-        var max = tileMap.Keys.Aggregate((a, b) => a.Max(b));
+        var min = tileMap.Keys.Min();
+        var max = tileMap.Keys.Max();
 
         for (var y = min.Y; y < max.Y; y++)
         {

@@ -23,8 +23,8 @@ public static class Day13
 
     private static long ReflectionNote(HashSet<Vector2> rocks, Func<Vector2, long> project, Func<Vector2, long, Vector2> reflect, int errorExpectancy = 0)
     {
-        var min = rocks.Aggregate((a, b) => a.Min(b));
-        var max = rocks.Aggregate((a, b) => a.Max(b));
+        var min = rocks.Min();
+        var max = rocks.Max();
 
         for (var i = project(min); i < project(max); i++)
         {

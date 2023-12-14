@@ -82,27 +82,6 @@ public static class Extensions
         return items.SelectMany(i => i);
     }
 
-    public static IEnumerable<IEnumerable<T>> SubsequencesBy<T>(this IEnumerable<T> items, Func<T, bool> predicate)
-    {
-        var subsequence = new List<T>();
-        foreach (var item in items)
-        {
-            if (predicate(item))
-            {
-                subsequence.Add(item);
-            }
-            else if (subsequence.NonEmpty())
-            {
-                yield return subsequence;
-                subsequence = new List<T>();
-            }
-        }
-        if (subsequence.NonEmpty())
-        {
-            yield return subsequence;
-        }
-    }
-
     public static IEnumerable<IEnumerable<T>> SplitBy<T>(this IEnumerable<T> items, Func<T, bool> predicate)
     {
         var subsequence = new List<T>();
@@ -150,6 +129,7 @@ public static class Extensions
 
 public record Vector2(long X, long Y)
 {
+    public static readonly Vector2 Zero = new Vector2(0, 0);
     public static readonly Vector2 Up = new Vector2(0, 1);
     public static readonly Vector2 Down = new Vector2(0, -1);
     public static readonly Vector2 Left = new Vector2(-1, 0);
@@ -181,7 +161,7 @@ public static class Vector2Extensions
         return v.Multiply(-1);
     }
 
-    public static Vector2 Multiply(this Vector2 v, int factor)
+    public static Vector2 Multiply(this Vector2 v, long factor)
     {
         return new Vector2(v.X * factor, v.Y * factor);
     }
@@ -189,6 +169,11 @@ public static class Vector2Extensions
     public static Vector2 Add(this Vector2 a, Vector2 b)
     {
         return new Vector2(a.X + b.X, a.Y + b.Y);
+    }
+
+    public static Vector2 Subtract(this Vector2 a, Vector2 b)
+    {
+        return a.Add(b.Inverse());
     }
 
     public static Vector2 Min(this Vector2 a, Vector2 b)
@@ -215,6 +200,16 @@ public static class Vector2Extensions
     public static IEnumerable<Vector2> Adjacent8(this Vector2 v)
     {
         return Vector2.Directions.Concat(Vector2.Diagonals).Select(d => v.Add(d));
+    }
+
+    public static Vector2 Min(this IEnumerable<Vector2> vectors)
+    {
+        return vectors.Aggregate((a, b) => a.Min(b));
+    }
+
+    public static Vector2 Max(this IEnumerable<Vector2> vectors)
+    {
+        return vectors.Aggregate((a, b) => a.Max(b));
     }
 }
 
