@@ -31,15 +31,15 @@ public static class Day14
         return platform.Where(kv => kv.Value == 'O').Select(kv => kv.Key.Y + 1).Sum();
     }
 
+    private static bool Equals(Dictionary<Vector2, char> a, Dictionary<Vector2, char> b)
+    {
+        return a.All(kv => b.ContainsKey(kv.Key) && b[kv.Key] == kv.Value);
+    }
+
     private static Dictionary<Vector2, char> TiltCycle(Dictionary<Vector2, char> platform)
     {
         var directions = new[] { Vector2.Up, Vector2.Left, Vector2.Down, Vector2.Right };
         return directions.Aggregate(platform, Tilt);
-    }
-
-    private static bool Equals(Dictionary<Vector2, char> a, Dictionary<Vector2, char> b)
-    {
-        return a.All(kv => b.ContainsKey(kv.Key) && b[kv.Key] == kv.Value);
     }
 
     private static Dictionary<Vector2, char> Tilt(Dictionary<Vector2, char> platform, Vector2 direction)
