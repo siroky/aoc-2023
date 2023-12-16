@@ -156,6 +156,11 @@ public static class Vector2Extensions
         return a.X >= b.X && a.Y >= b.Y;
     }
 
+    public static bool In(this Vector2 v, Vector2 min, Vector2 max)
+    {
+        return v.GreaterOrEqual(min) && v.LessOrEqual(max);
+    }
+
     public static Vector2 Inverse(this Vector2 v)
     {
         return v.Multiply(-1);

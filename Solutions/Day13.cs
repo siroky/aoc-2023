@@ -29,7 +29,7 @@ public static class Day13
         for (var i = project(min); i < project(max); i++)
         {
             var allReflections = rocks.Select(r => reflect(r, i + (i - project(r) + 1)));
-            var reflections = allReflections.Where(r => r.GreaterOrEqual(min) && r.LessOrEqual(max));
+            var reflections = allReflections.Where(r => r.In(min, max));
             if (reflections.Count(r => !rocks.Contains(r)) == errorExpectancy)
             {
                 return i - project(min) + 1;
