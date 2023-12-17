@@ -4,8 +4,7 @@ public static class Day14
 {
     public static IEnumerable<object> Solve(List<string> lines)
     {
-        var platform = ParsePlatform(lines);
-
+        var platform = lines.ToGrid();
         var tilted = Tilt(platform, Vector2.Up);
         yield return NorthLoad(tilted);
 
@@ -26,34 +25,32 @@ public static class Day14
         }
     }
 
-    private static long NorthLoad(Dictionary<Vector2, char> platform)
+    private static long NorthLoad(Grid2 platform)
     {
-        return platform.Where(kv => kv.Value == 'O').Select(kv => kv.Key.Y + 1).Sum();
+        return platform.Items.Where(kv => kv.Value == 'O').Select(kv => kv.Key.Y + 1).Sum();
     }
 
-    private static bool Equals(Dictionary<Vector2, char> a, Dictionary<Vector2, char> b)
+    private static bool Equals(Grid2 a, Grid2 b)
     {
-        return a.All(kv => b.ContainsKey(kv.Key) && b[kv.Key] == kv.Value);
+        return a.Items.All(kv => b.Items.ContainsKey(kv.Key) && b.Items[kv.Key] == kv.Value);
     }
 
-    private static Dictionary<Vector2, char> TiltCycle(Dictionary<Vector2, char> platform)
+    private static Grid2 TiltCycle(Grid2 platform)
     {
         var directions = new[] { Vector2.Up, Vector2.Left, Vector2.Down, Vector2.Right };
         return directions.Aggregate(platform, Tilt);
     }
 
-    private static Dictionary<Vector2, char> Tilt(Dictionary<Vector2, char> platform, Vector2 direction)
+    private static Grid2 Tilt(Grid2 platform, Vector2 direction)
     {
-        var min = platform.Keys.Min();
-        var max = platform.Keys.Max();
-        var result = platform.Where(kv => kv.Value == '#').ToDictionary(kv => kv.Key, kv => kv.Value);
+        var result = platform.Items.Where(kv => kv.Value == '#').ToDictionary(kv => kv.Key, kv => kv.Value);
 
         // Determine target positions of rolling rocks, while ignoring other rolling rocks.
         var targets = new List<Vector2>();
-        foreach (var (rock, c) in platform.Where(kv => kv.Value == 'O'))
+        foreach (var (rock, c) in platform.Items.Where(kv => kv.Value == 'O'))
         {
             var position = rock;
-            while (!result.ContainsKey(position) && position.In(min, max))
+            while (!result.ContainsKey(position) && position.In(platform.Min, platform.Max))
             {
                 position = position.Add(direction);
             }
@@ -70,25 +67,6 @@ public static class Day14
             }
         }
 
-        return result;
-    }
-
-    private static Dictionary<Vector2, char> ParsePlatform(List<string> lines)
-    {
-        var result = new Dictionary<Vector2, char>();
-        for (var y = 0; y < lines.Count; y++)
-        {
-            var line = lines[y];
-            for (var x = 0; x < line.Length; x++)
-            {
-                var c = line[x];
-                if (c != '.')
-                {
-                    result[new Vector2(x, lines.Count - y - 1)] = c;
-                }
-            }
-        }
-
-        return result;
+        return new Grid2(result, platform.Min, platform.Max);
     }
 }

@@ -5,7 +5,7 @@ public static class Day13
     public static IEnumerable<object> Solve(List<string> lines)
     {
         var maps = lines.SplitBy(l => l.IsEmpty());
-        var rocks = maps.Select(m => ParseRocks(m)).ToList();
+        var rocks = maps.Select(m => m.ToList().ToGrid(c => c == '#')).ToList();
 
         var notes = rocks.Select(r => ReflectionNote(r)).ToList();
         yield return notes.Sum();
@@ -14,33 +14,25 @@ public static class Day13
         yield return smudgedNotes.Sum();
     }
 
-    private static long ReflectionNote(HashSet<Vector2> rocks, int errorExpectancy = 0)
+    private static long ReflectionNote(Grid2 rocks, int errorExpectancy = 0)
     {
         var x = ReflectionNote(rocks, v => v.X, (v, n) => new Vector2(n, v.Y), errorExpectancy);
         var y = ReflectionNote(rocks, v => v.Y, (v, n) => new Vector2(v.X, n), errorExpectancy);
-        return x + 100 * y;
+        return x + 100 * (y == 0 ? 0 : rocks.Max.Y - rocks.Min.Y - y + 1);
     }
 
-    private static long ReflectionNote(HashSet<Vector2> rocks, Func<Vector2, long> project, Func<Vector2, long, Vector2> reflect, int errorExpectancy = 0)
+    private static long ReflectionNote(Grid2 rocks, Func<Vector2, long> project, Func<Vector2, long, Vector2> reflect, int errorExpectancy = 0)
     {
-        var min = rocks.Min();
-        var max = rocks.Max();
-
-        for (var i = project(min); i < project(max); i++)
+        for (var i = project(rocks.Min); i < project(rocks.Max); i++)
         {
-            var allReflections = rocks.Select(r => reflect(r, i + (i - project(r) + 1)));
-            var reflections = allReflections.Where(r => r.In(min, max));
-            if (reflections.Count(r => !rocks.Contains(r)) == errorExpectancy)
+            var allReflections = rocks.Items.Keys.Select(r => reflect(r, i + (i - project(r) + 1)));
+            var reflections = allReflections.Where(r => r.In(rocks.Min, rocks.Max));
+            if (reflections.Count(r => !rocks.Items.ContainsKey(r)) == errorExpectancy)
             {
-                return i - project(min) + 1;
+                return i - project(rocks.Min) + 1;
             }
         }
 
         return 0;
-    }
-
-    private static HashSet<Vector2> ParseRocks(IEnumerable<string> lines)
-    {
-        return lines.SelectMany((l, y) => l.Select((c, x) => (x, c == '#')).Where(t => t.Item2).Select(t => new Vector2(t.x, y))).ToHashSet();
     }
 }

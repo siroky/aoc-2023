@@ -4,19 +4,28 @@ public static class Day10
 {
     public static IEnumerable<object> Solve(List<string> lines)
     {
-        var tiles = lines.SelectMany((l, y) => l.Select((c, x) => ParseTile(x, -y, c)));
-        var tileMap = tiles.ToDictionary(p => p.Position, p => p);
+        var tiles = lines.ToGrid((c, p) => new Tile(p, c, new HashSet<Vector2>(c switch
+        {
+            '|' => new[] { Vector2.Up, Vector2.Down },
+            '-' => new[] { Vector2.Left, Vector2.Right },
+            'L' => new[] { Vector2.Up, Vector2.Right },
+            'J' => new[] { Vector2.Up, Vector2.Left },
+            '7' => new[] { Vector2.Down, Vector2.Left },
+            'F' => new[] { Vector2.Down, Vector2.Right },
+            'S' => Vector2.Directions,
+            '.' => Enumerable.Empty<Vector2>(),
+        })));
         
-        var start = tileMap.Values.First(p => p.Type == 'S');
-        var steps = Traverse(tileMap, start).ToList();
+        var start = tiles.Items.Values.First(p => p.Type == 'S');
+        var steps = Traverse(tiles, start).ToList();
         yield return steps.Count() - 1;
 
         var loop = steps.Flatten().ToHashSet();
-        var inside = Inside(tileMap, loop);
+        var inside = Inside(tiles, loop);
         yield return inside.Count();
     }
 
-    private static IEnumerable<IEnumerable<Tile>> Traverse(Dictionary<Vector2, Tile> tileMap, Tile start)
+    private static IEnumerable<IEnumerable<Tile>> Traverse(Grid2<Tile> tiles, Tile start)
     {
         var visited = new HashSet<Tile>();
         var current = new List<Tile> { start };
@@ -32,7 +41,7 @@ public static class Day10
                 foreach (var connection in tile.Connections)
                 {
                     var nextPosition = tile.Position.Add(connection);
-                    var nextTile = tileMap.GetValueOrDefault(nextPosition);
+                    var nextTile = tiles.Items.GetValueOrDefault(nextPosition);
                     if (nextTile != null && nextTile.Connections.Contains(connection.Inverse()) && !visited.Contains(nextTile))
                     {
                         next.Add(nextTile);
@@ -44,19 +53,16 @@ public static class Day10
         }
     }
 
-    private static IEnumerable<Tile> Inside(Dictionary<Vector2, Tile> tileMap, HashSet<Tile> loop)
+    private static IEnumerable<Tile> Inside(Grid2<Tile> tiles, HashSet<Tile> loop)
     {
-        var min = tileMap.Keys.Min();
-        var max = tileMap.Keys.Max();
-
-        for (var y = min.Y; y < max.Y; y++)
+        for (var y = tiles.Min.Y; y < tiles.Max.Y; y++)
         {
             var upInside = false;
             var downInside = false;
 
-            for (var x = min.X; x < max.X; x++)
+            for (var x = tiles.Min.X; x < tiles.Max.X; x++)
             {
-                var tile = tileMap.GetValueOrDefault(new Vector2(x, y));
+                var tile = tiles.Items.GetValueOrDefault(new Vector2(x, y));
 
                 if (loop.Contains(tile))
                 {
@@ -75,23 +81,6 @@ public static class Day10
                 }
             }
         }
-    }
-
-    private static Tile ParseTile(long x, long y, char type)
-    {
-        var connections = type switch
-        {
-            '|' => new[] { Vector2.Up, Vector2.Down },
-            '-' => new[] { Vector2.Left, Vector2.Right },
-            'L' => new[] { Vector2.Up, Vector2.Right },
-            'J' => new[] { Vector2.Up, Vector2.Left },
-            '7' => new[] { Vector2.Down, Vector2.Left },
-            'F' => new[] { Vector2.Down, Vector2.Right },
-            'S' => Vector2.Directions,
-            '.' => Enumerable.Empty<Vector2>(),
-        };
-
-        return new Tile(new Vector2(x, y), type, connections.ToHashSet());
     }
 
     record Tile(Vector2 Position, char Type, HashSet<Vector2> Connections);

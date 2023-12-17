@@ -1,4 +1,6 @@
-﻿namespace AOC;
+﻿using System.Text;
+
+namespace AOC;
 
 public static class Extensions
 {
@@ -234,5 +236,58 @@ public static class Vector3Extensions
             Y: Math.Max(a.Y, b.Y),
             Z: Math.Max(a.Z, b.Z)
         );
+    }
+}
+
+public record Grid2<T>(Dictionary<Vector2, T> Items, Vector2 Min, Vector2 Max)
+{
+    public Grid2(Dictionary<Vector2, T> items)
+        : this(items, items.Keys.Min(), items.Keys.Max()) { }
+}
+
+public record Grid2(Grid2<char> grid) : Grid2<char>(grid)
+{
+    public Grid2(Dictionary<Vector2, char> items, Vector2 min, Vector2 max)
+        : this(new Grid2<char>(items, min, max)) { }
+
+    public override string ToString()
+    {
+        var result = new StringBuilder();
+        for (var y = Max.Y; y >= Min.Y; y--)
+        {
+            for (var x = Min.X; x <= Max.X; x++)
+            {
+                result.Append(Items.TryGetValue(new Vector2(x, y), out var c) ? c : ' ');
+            }
+            result.AppendLine();
+        }
+        return result.ToString();
+    }
+}
+
+public static class GridExtensions
+{
+    public static Grid2<T> ToGrid<T>(this List<string> lines, Func<char, Vector2, T> value, Func<char, bool> predicate = null)
+    {
+        var items = new Dictionary<Vector2, T>();
+        for (var l = 0; l < lines.Count; l++)
+        {
+            for (var x = 0; x < lines[l].Length; x++)
+            {
+                var c = lines[l][x];
+                if (predicate == null || predicate(c))
+                {
+                    var position = new Vector2(x, lines.Count - 1 - l);
+                    items.Add(position, value(c, position));
+                }
+            }
+        }
+
+        return new Grid2<T>(items, items.Keys.Min(), items.Keys.Max());
+    }
+
+    public static Grid2 ToGrid(this List<string> lines, Func<char, bool> predicate = null)
+    {
+        return new Grid2(lines.ToGrid((c, _) => c, predicate));
     }
 }

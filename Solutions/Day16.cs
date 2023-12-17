@@ -4,7 +4,7 @@ public static class Day16
 {
     public static IEnumerable<object> Solve(List<string> lines)
     {
-        var grid = ParseGrid(lines);
+        var grid = lines.ToGrid();
         var energized = Traverse(grid, new Beam(new Vector2(grid.Min.X, grid.Max.Y), Vector2.Right));
         yield return energized.Count;
 
@@ -23,7 +23,7 @@ public static class Day16
         yield return energizedMap.Values.Select(e => e.Count).Max();
     }
 
-    private static HashSet<Vector2> Traverse(Grid grid, Beam start)
+    private static HashSet<Vector2> Traverse(Grid2 grid, Beam start)
     {
         var visitedBeams = new HashSet<Beam>();
         var currentBeams = start.ToEnumerable().ToHashSet();
@@ -32,7 +32,7 @@ public static class Day16
         {
             visitedBeams.UnionWith(currentBeams);
 
-            var newBeams = currentBeams.SelectMany(b => Step(b, grid.Tiles[b.Position])).ToHashSet();
+            var newBeams = currentBeams.SelectMany(b => Step(b, grid.Items[b.Position])).ToHashSet();
             currentBeams = newBeams.Where(b => b.Position.In(grid.Min, grid.Max) && !visitedBeams.Contains(b)).ToHashSet();
         }
 
@@ -69,22 +69,6 @@ public static class Day16
     {
         return new Beam(beam.Position.Add(direction), direction);
     }
-
-    private static Grid ParseGrid(List<string> lines)
-    {
-        var result = new Dictionary<Vector2, char>();
-        for (var l = 0; l < lines.Count; l++)
-        {
-            for (var x = 0; x < lines[l].Length; x++)
-            {
-                result.Add(new Vector2(x, lines.Count - l), lines[l][x]);
-            }
-        }
-
-        return new Grid(result, result.Keys.Min(), result.Keys.Max());
-    }
-
-    record Grid(Dictionary<Vector2, char> Tiles, Vector2 Min, Vector2 Max);
 
     record Beam(Vector2 Position, Vector2 Direction);
 }
