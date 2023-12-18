@@ -50,7 +50,7 @@ public static class Day14
         foreach (var (rock, c) in platform.Items.Where(kv => kv.Value == 'O'))
         {
             var position = rock;
-            while (!result.ContainsKey(position) && position.In(platform.Min, platform.Max))
+            while (!result.ContainsKey(position) && position.In(platform))
             {
                 position = position.Add(direction);
             }

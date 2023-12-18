@@ -26,7 +26,7 @@ public static class Day13
         for (var i = project(rocks.Min); i < project(rocks.Max); i++)
         {
             var allReflections = rocks.Items.Keys.Select(r => reflect(r, i + (i - project(r) + 1)));
-            var reflections = allReflections.Where(r => r.In(rocks.Min, rocks.Max));
+            var reflections = allReflections.Where(r => r.In(rocks));
             if (reflections.Count(r => !rocks.Items.ContainsKey(r)) == errorExpectancy)
             {
                 return i - project(rocks.Min) + 1;

@@ -33,7 +33,7 @@ public static class Day16
             visitedBeams.UnionWith(currentBeams);
 
             var newBeams = currentBeams.SelectMany(b => Step(b, grid.Items[b.Position])).ToHashSet();
-            currentBeams = newBeams.Where(b => b.Position.In(grid.Min, grid.Max) && !visitedBeams.Contains(b)).ToHashSet();
+            currentBeams = newBeams.Where(b => b.Position.In(grid) && !visitedBeams.Contains(b)).ToHashSet();
         }
 
         return visitedBeams.Select(b => b.Position).ToHashSet();

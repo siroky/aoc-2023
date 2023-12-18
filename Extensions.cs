@@ -139,6 +139,11 @@ public record Vector2(long X, long Y)
 
     public static readonly IEnumerable<Vector2> Directions = new[] { Up, Down, Left, Right };
     public static readonly IEnumerable<Vector2> Diagonals = new[] { Up.Add(Left), Up.Add(Right), Down.Add(Left), Down.Add(Right) };
+
+    public override string ToString()
+    {
+        return $"({X}, {Y})";
+    }
 }
 
 public static class Vector2Extensions
@@ -158,9 +163,9 @@ public static class Vector2Extensions
         return a.X >= b.X && a.Y >= b.Y;
     }
 
-    public static bool In(this Vector2 v, Vector2 min, Vector2 max)
+    public static bool In<T>(this Vector2 v, Grid2<T> grid)
     {
-        return v.GreaterOrEqual(min) && v.LessOrEqual(max);
+        return v.GreaterOrEqual(grid.Min) && v.LessOrEqual(grid.Max);
     }
 
     public static Vector2 Inverse(this Vector2 v)
