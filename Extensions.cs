@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace AOC;
+﻿namespace AOC;
 
 public static class Extensions
 {
@@ -132,6 +130,7 @@ public static class Extensions
 public record Vector2(long X, long Y)
 {
     public static readonly Vector2 Zero = new Vector2(0, 0);
+    public static readonly Vector2 One = new Vector2(1, 1);
     public static readonly Vector2 Up = new Vector2(0, 1);
     public static readonly Vector2 Down = new Vector2(0, -1);
     public static readonly Vector2 Left = new Vector2(-1, 0);
@@ -148,11 +147,6 @@ public record Vector2(long X, long Y)
 
 public static class Vector2Extensions
 {
-    public static long ManhattanDistance(this Vector2 a, Vector2 b)
-    {
-        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
-    }
-
     public static bool LessOrEqual(this Vector2 a, Vector2 b)
     {
         return a.X <= b.X && a.Y <= b.Y;
@@ -163,14 +157,44 @@ public static class Vector2Extensions
         return a.X >= b.X && a.Y >= b.Y;
     }
 
+    public static bool In(this Vector2 v, Vector2 min, Vector2 max)
+    {
+        return v.GreaterOrEqual(min) && v.LessOrEqual(max);
+    }
+
     public static bool In<T>(this Vector2 v, Grid2<T> grid)
     {
-        return v.GreaterOrEqual(grid.Min) && v.LessOrEqual(grid.Max);
+        return v.In(grid.Min, grid.Max);
+    }
+
+    public static long ManhattanLength(this Vector2 a)
+    {
+        return a.ManhattanDistance(Vector2.Zero);
+    }
+
+    public static long ManhattanDistance(this Vector2 a, Vector2 b)
+    {
+        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
     }
 
     public static Vector2 Inverse(this Vector2 v)
     {
         return v.Multiply(-1);
+    }
+
+    public static Vector2 Sign(this Vector2 v)
+    {
+        return new Vector2(Math.Sign(v.X), Math.Sign(v.Y));
+    }
+
+    public static Vector2 Abs(this Vector2 v)
+    {
+        return new Vector2(Math.Abs(v.X), Math.Abs(v.Y));
+    }
+
+    public static Vector2 TurnClockwise(this Vector2 v)
+    {
+        return new Vector2(v.Y, -v.X);
     }
 
     public static Vector2 Multiply(this Vector2 v, long factor)
@@ -196,17 +220,17 @@ public static class Vector2Extensions
         );
     }
 
+    public static Vector2 Shorter(this Vector2 a, Vector2 b)
+    {
+        return a.ManhattanLength() < b.ManhattanLength() ? a : b;
+    }
+
     public static Vector2 Max(this Vector2 a, Vector2 b)
     {
         return new Vector2(
             X: Math.Max(a.X, b.X),
             Y: Math.Max(a.Y, b.Y)
         );
-    }
-
-    public static IEnumerable<Vector2> Adjacent4(this Vector2 v)
-    {
-        return Vector2.Directions.Select(d => v.Add(d));
     }
 
     public static IEnumerable<Vector2> Adjacent8(this Vector2 v)
@@ -254,20 +278,6 @@ public record Grid2(Grid2<char> grid) : Grid2<char>(grid)
 {
     public Grid2(Dictionary<Vector2, char> items, Vector2 min, Vector2 max)
         : this(new Grid2<char>(items, min, max)) { }
-
-    public override string ToString()
-    {
-        var result = new StringBuilder();
-        for (var y = Max.Y; y >= Min.Y; y--)
-        {
-            for (var x = Min.X; x <= Max.X; x++)
-            {
-                result.Append(Items.TryGetValue(new Vector2(x, y), out var c) ? c : ' ');
-            }
-            result.AppendLine();
-        }
-        return result.ToString();
-    }
 }
 
 public static class GridExtensions
