@@ -62,7 +62,7 @@ public static class Extensions
         return !items.IsEmpty();
     }
 
-    public static int Product<T>(this IEnumerable<T> items, Func<T, int> selector)
+    public static long Product<T>(this IEnumerable<T> items, Func<T, long> selector)
     {
         return items.Select(selector).Aggregate((a, b) => a * b);
     }
