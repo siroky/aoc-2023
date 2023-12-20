@@ -67,6 +67,11 @@ public static class Extensions
         return items.Select(selector).Aggregate((a, b) => a * b);
     }
 
+    public static long Product(this IEnumerable<long> items)
+    {
+        return items.Aggregate((a, b) => a * b);
+    }
+
     public static IEnumerable<T> ToEnumerable<T>(this T item)
     {
         yield return item;
