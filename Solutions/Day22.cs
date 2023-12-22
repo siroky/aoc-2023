@@ -8,9 +8,6 @@ public static class Day22
         var below = Settle(bricks);
         var cascades = Cascades(below);
 
-        var independent1 = cascades.Where(kv => kv.Value.Count == 1).Select(kv => kv.Key).ToHashSet();
-        var independent2 = bricks.Where(lower => !bricks.Any(b => below[b].Count == 1 && below[b].Contains(lower))).ToHashSet();
-
         yield return cascades.Count(kv => kv.Value.Count == 1);
         yield return cascades.Sum(kv => kv.Value.Count - 1);
     }
@@ -26,7 +23,7 @@ public static class Day22
             var fallen = brick.ToEnumerable().ToHashSet();
             while (true)
             {
-                var next = standing.FirstOrDefault(sb => below[sb].All(bb => fallen.Contains(bb)));
+                var next = standing.FirstOrDefault(sb => below[sb].NonEmpty() && below[sb].All(bb => fallen.Contains(bb)));
                 if (next != null)
                 {
                     foreach (var fallenBrick in result[next])
