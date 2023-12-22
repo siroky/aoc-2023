@@ -12,7 +12,7 @@ public static class Day10
             'J' => new[] { Vector2.Up, Vector2.Left },
             '7' => new[] { Vector2.Down, Vector2.Left },
             'F' => new[] { Vector2.Down, Vector2.Right },
-            'S' => Vector2.Directions,
+            'S' => Vector2.StraightDirections,
             '.' => Enumerable.Empty<Vector2>(),
         })));
         
