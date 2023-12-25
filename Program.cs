@@ -6,7 +6,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        var day = $"{DateTime.Now.Day - 4 - (DateTime.Now.Hour < 4 ? 1 : 0):00}";
+        var day = $"{DateTime.Now.Day - (DateTime.Now.Hour < 4 ? 1 : 0):00}";
         var lines = File.ReadAllLines($"../../../Inputs/{day}.txt").ToList();
         var solver = Type.GetType($"AOC.Day{day}");
         var solve = solver.GetMethod("Solve", BindingFlags.Public | BindingFlags.Static);
